@@ -1,26 +1,42 @@
 package it.polito.tdp.food.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Food {
 	private Integer food_code;
 	private String display_name;
-	
+	private List<Condiment> condiments;
+
 	public Food(Integer food_code, String display_name) {
 		super();
 		this.food_code = food_code;
 		this.display_name = display_name;
+		condiments = new ArrayList<>();
 	}
-	
+
 	public Integer getFood_code() {
 		return food_code;
 	}
+
 	public void setFood_code(Integer food_code) {
 		this.food_code = food_code;
 	}
+
 	public String getDisplay_name() {
 		return display_name;
 	}
+
 	public void setDisplay_name(String display_name) {
 		this.display_name = display_name;
+	}
+
+	public List<Condiment> getCondiments() {
+		return condiments;
+	}
+
+	public void setCondiments(List<Condiment> condiments) {
+		this.condiments = condiments;
 	}
 
 	@Override
@@ -53,6 +69,4 @@ public class Food {
 		return display_name;
 	}
 
-	
-	
 }

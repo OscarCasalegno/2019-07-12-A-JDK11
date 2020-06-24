@@ -6,54 +6,65 @@ public class Portion {
 	private String portion_display_name;
 	private Double calories;
 	private Double saturated_fats;
-	private Integer food_code;
-	
+	private Food food;
+
 	public Portion(Integer portion_id, Double portion_amount, String portion_display_name, Double calories,
-			Double saturated_fats, Integer food_code) {
+			Double saturated_fats, Food food) {
 		super();
 		this.portion_id = portion_id;
 		this.portion_amount = portion_amount;
 		this.portion_display_name = portion_display_name;
 		this.calories = calories;
 		this.saturated_fats = saturated_fats;
-		this.food_code = food_code;
+		this.food = food;
 	}
-	
+
 	public Integer getPortion_id() {
 		return portion_id;
 	}
+
 	public void setPortion_id(Integer portion_id) {
 		this.portion_id = portion_id;
 	}
+
 	public Double getPortion_amount() {
 		return portion_amount;
 	}
+
 	public void setPortion_amount(Double portion_amount) {
 		this.portion_amount = portion_amount;
 	}
+
 	public String getPortion_display_name() {
 		return portion_display_name;
 	}
+
 	public void setPortion_display_name(String portion_display_name) {
 		this.portion_display_name = portion_display_name;
 	}
+
 	public Double getCalories() {
 		return calories;
 	}
+
 	public void setCalories(Double calories) {
 		this.calories = calories;
 	}
+
 	public Double getSaturated_fats() {
 		return saturated_fats;
 	}
+
 	public void setSaturated_fats(Double saturated_fats) {
 		this.saturated_fats = saturated_fats;
 	}
-	public Integer getFood_code() {
-		return food_code;
+
+	public Food getFood() {
+		return food;
 	}
-	public void setFood_code(Integer food_code) {
-		this.food_code = food_code;
+
+	public void setFood(Food food) {
+		this.food = food;
 	}
 
 	@Override
@@ -84,9 +95,7 @@ public class Portion {
 	@Override
 	public String toString() {
 		return "{portion_id=" + portion_id + ", portion_amount=" + portion_amount + ", portion_display_name="
-				+ portion_display_name + ", food_code=" + food_code + "}";
+				+ portion_display_name + ", food=" + food + "}";
 	}
 
-	
-	
 }
