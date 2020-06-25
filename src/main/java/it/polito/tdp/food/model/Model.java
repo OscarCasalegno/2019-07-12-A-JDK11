@@ -1,12 +1,15 @@
 package it.polito.tdp.food.model;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
 import org.jgrapht.Graph;
+import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
@@ -18,6 +21,7 @@ public class Model {
 	private Map<Integer, Food> idMapFood;
 	private FoodDao dao;
 	private Graph<Food, DefaultWeightedEdge> graph;
+	private Simulator sim;
 
 	public Model() {
 		this.idMapCondiment = new HashMap<>();
@@ -33,20 +37,31 @@ public class Model {
 
 		this.graph = new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
 
-		List<Portion> portions = dao.listPortionsByNumber(number, idMapFood);
+		List<Food> cibi = dao.listFoodsByNumber(number, idMapFood);
 
-		for (Portion p : portions) {
-			this.graph.addVertex(p.getFood());
+		for (Food f : cibi) {
+			this.graph.addVertex(f);
 		}
 
 		for (Food f : this.graph.vertexSet()) {
-			for (Food f2 : dao.listConnectionsOf(f, idMapFood)) {
-				if (!this.graph.containsEdge(f, f2) && this.graph.containsVertex(f2)) {
+			List<Food> neig = dao.listConnectionsOf(f, idMapFood);
+			neig.retainAll(this.graph.vertexSet());
+			for (Food f2 : neig) {
+				if (!this.graph.containsEdge(f, f2)) {
 					this.graph.addEdge(f, f2);
 					this.graph.setEdgeWeight(f, f2, this.calcolaPeso(f, f2));
 				}
 			}
 		}
+
+		for (Food f : new HashSet<Food>(this.graph.vertexSet())) {
+			if (this.graph.degreeOf(f) == 0) {
+				this.graph.removeVertex(f);
+			}
+		}
+		ConnectivityInspector<Food, DefaultWeightedEdge> con = new ConnectivityInspector<Food, DefaultWeightedEdge>(
+				this.graph);
+		System.out.println(con.isConnected());
 	}
 
 	private double calcolaPeso(Food f, Food f2) {
@@ -65,13 +80,13 @@ public class Model {
 		return new ArrayList<Food>(this.graph.vertexSet());
 	}
 
-	public Map<Food, Double> getNeighboursOf(Food f) {
+	public Map<Food, Double> getNeighboursOf(Food f, int number) {
 		List<DefaultWeightedEdge> edges = new ArrayList<>(this.graph.edgesOf(f));
 		Map<Food, Double> mappa = new HashMap<>();
 
 		if (edges.size() == 0) {
 			return null;
-		} else if (edges.size() <= 5) {
+		} else if (edges.size() <= number) {
 			for (DefaultWeightedEdge e : edges) {
 				Food altro;
 
@@ -99,7 +114,7 @@ public class Model {
 				mappa.put(altro, this.graph.getEdgeWeight(e));
 
 				cont++;
-				if (cont == 5) {
+				if (cont == number) {
 					break;
 				}
 			}
@@ -107,6 +122,21 @@ public class Model {
 		}
 
 		return mappa;
+	}
+
+	public void simula(Food start, int k) {
+		sim = new Simulator(this.graph);
+		sim.init(start, this.getNeighboursOf(start, k));
+		sim.setK(k);
+		sim.run();
+	}
+
+	public Duration getTempoTotale() {
+		return sim.getTempoTotale();
+	}
+
+	public int getNumeroCibi() {
+		return sim.getNumeroCibi();
 	}
 
 }

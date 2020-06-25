@@ -5,6 +5,7 @@
 package it.polito.tdp.food;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -66,7 +67,9 @@ public class FoodController {
 		}
 
 		this.model.creaGrafo(number);
-		this.boxFood.getItems().addAll(this.model.getFood());
+		List<Food> cibo = this.model.getFood();
+		cibo.sort(null);
+		this.boxFood.getItems().addAll(cibo);
 	}
 
 	@FXML
@@ -80,7 +83,7 @@ public class FoodController {
 			return;
 		}
 
-		Map<Food, Double> mappa = this.model.getNeighboursOf(scelta);
+		Map<Food, Double> mappa = this.model.getNeighboursOf(scelta, 5);
 
 		if (mappa == null) {
 			this.txtResult.appendText("Nessun collegamento");
@@ -97,7 +100,30 @@ public class FoodController {
 	@FXML
 	void doSimula(ActionEvent event) {
 		txtResult.clear();
-		txtResult.appendText("Simulazione...");
+
+		Food scelta = this.boxFood.getValue();
+
+		if (scelta == null) {
+			this.txtResult.appendText("Scegli un cibo");
+			return;
+		}
+
+		Integer k;
+		try {
+			k = Integer.parseInt(this.txtK.getText());
+		} catch (NumberFormatException e) {
+			this.txtResult.appendText("Scrivi un numero tra 1 e 10");
+			return;
+		}
+		if (k < 1 || k > 10) {
+			this.txtResult.appendText("Scrivi un numero tra 1 e 10");
+			return;
+		}
+
+		this.model.simula(scelta, k);
+
+		this.txtResult.appendText("Numero totale cibi: " + this.model.getNumeroCibi() + "\n");
+		this.txtResult.appendText("Tempo totale: " + this.model.getTempoTotale().toMinutes() + " Minuti\n");
 	}
 
 	@FXML // This method is called by the FXMLLoader when initialization is complete

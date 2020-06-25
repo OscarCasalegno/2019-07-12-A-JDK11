@@ -122,23 +122,23 @@ public class FoodDao {
 
 	}
 
-	public List<Portion> listPortionsByNumber(Integer number, Map<Integer, Food> idMapFood) {
-		String sql = "SELECT * " + "	FROM `portion` " + "	GROUP BY food_code " + "	HAVING COUNT(*)<= ?";
+	public List<Food> listFoodsByNumber(Integer number, Map<Integer, Food> idMapFood) {
+		String sql = "SELECT food.food_code as code"
+				+ "	FROM `portion`, food WHERE food.food_code=portion.food_code " + "	GROUP BY food.food_code "
+				+ "	HAVING COUNT(DISTINCT portion.portion_id)<= ?";
 		try {
 			Connection conn = DBConnect.getConnection();
 
 			PreparedStatement st = conn.prepareStatement(sql);
 			st.setInt(1, number);
 
-			List<Portion> list = new ArrayList<>();
+			List<Food> list = new ArrayList<>();
 
 			ResultSet res = st.executeQuery();
 
 			while (res.next()) {
 				try {
-					list.add(new Portion(res.getInt("portion_id"), res.getDouble("portion_amount"),
-							res.getString("portion_display_name"), res.getDouble("calories"),
-							res.getDouble("saturated_fats"), idMapFood.get(res.getInt("food_code"))));
+					list.add(idMapFood.get(res.getInt("code")));
 				} catch (Throwable t) {
 					t.printStackTrace();
 				}

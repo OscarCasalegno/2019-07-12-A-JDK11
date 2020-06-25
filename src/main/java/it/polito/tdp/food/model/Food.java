@@ -3,7 +3,7 @@ package it.polito.tdp.food.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Food {
+public class Food implements Comparable<Food> {
 	private Integer food_code;
 	private String display_name;
 	private List<Condiment> condiments;
@@ -67,6 +67,11 @@ public class Food {
 	@Override
 	public String toString() {
 		return display_name;
+	}
+
+	@Override
+	public int compareTo(Food other) {
+		return this.display_name.compareTo(other.display_name);
 	}
 
 }
